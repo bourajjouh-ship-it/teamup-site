@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeamUp - Connexion</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { background-color: #0f0f1a; color: white; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: #1a1a2e; }
+    header h1 { color: #6c5ce7; }
+    nav a { color: white; text-decoration: none; margin-left: 20px; font-weight: bold; }
+    .conteneur-form { max-width: 400px; margin: 60px auto; background-color: #1a1a2e; padding: 40px; border-radius: 12px; }
+    .conteneur-form h2 { margin-bottom: 30px; text-align: center; }
+    label { display: block; margin-top: 18px; margin-bottom: 6px; font-weight: bold; color: #cccccc; }
+    input { width: 100%; padding: 10px; border-radius: 6px; background-color: #0f0f1a; color: white; border: 1px solid #333; }
+    button { width: 100%; margin-top: 30px; background-color: #6c5ce7; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+    button:hover { background-color: #5b4bd6; }
+    .lien-bas { text-align: center; margin-top: 20px; color: #888; }
+    .lien-bas a { color: #6c5ce7; }
+    .erreur { color: #e74c3c; margin-top: 15px; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>TeamUp</h1>
+    <nav><a href="index.html">Accueil</a></nav>
+  </header>
+
+  <div class="conteneur-form">
+    <h2>Se connecter</h2>
+    <form id="formulaire-connexion">
+      <label for="pseudo">Pseudo</label>
+      <input type="text" id="pseudo" required>
+
+      <label for="motDePasse">Mot de passe</label>
+      <input type="password" id="motDePasse" required>
+
+      <button type="submit">Se connecter</button>
+      <p id="message-erreur" class="erreur"></p>
+    </form>
+    <p class="lien-bas">Pas encore de compte ? <a href="inscription.html">S'inscrire</a></p>
+  </div>
+
+  <script>
+    document.getElementById("formulaire-connexion").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const pseudo = document.getElementById("pseudo").value;
+      const motDePasse = document.getElementById("motDePasse").value;
+
+      fetch("http://localhost:3000/api/connexion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pseudo, motDePasse })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.erreur) {
+            document.getElementById("message-erreur").textContent = data.erreur;
+          } else {
+            localStorage.setItem("pseudoConnecte", data.pseudo);
+            window.location.href = "feed.html";
+          }
+        })
+        .catch(err => {
+          document.getElementById("message-erreur").textContent = "Le serveur ne répond pas.";
+        });
+    });
+  </script>
+
+</body>
+</html>

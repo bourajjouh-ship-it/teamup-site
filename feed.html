@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeamUp - Trouver un coéquipier</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #0f0f1a;
+      color: white;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #1a1a2e;
+    }
+
+    header h1 {
+      color: #6c5ce7;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+
+    .contenu {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .filtres {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .filtres select {
+      padding: 10px;
+      border-radius: 6px;
+      background-color: #1a1a2e;
+      color: white;
+      border: 1px solid #333;
+    }
+
+    .carte-joueur {
+      background-color: #1a1a2e;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .carte-joueur .infos h3 {
+      color: #6c5ce7;
+      margin-bottom: 5px;
+    }
+
+    .carte-joueur .infos p {
+      color: #cccccc;
+      font-size: 14px;
+    }
+
+    .badge {
+      background-color: #6c5ce7;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+
+    .btn-demander {
+      background-color: #6c5ce7;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-demander:hover {
+      background-color: #5b4bd6;
+    }
+
+    .pub {
+      background-color: #262640;
+      text-align: center;
+      padding: 15px;
+      border-radius: 8px;
+      color: #888;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>TeamUp</h1>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="profil.html">Mon profil</a>
+    </nav>
+  </header>
+
+  <div class="contenu">
+    <h2 style="margin-bottom: 20px;">Trouver un coéquipier</h2>
+
+    <div class="filtres">
+      <select id="filtre-jeu">
+        <option value="">Tous les jeux</option>
+        <option value="Fortnite">Fortnite</option>
+        <option value="Valorant">Valorant</option>
+        <option value="Rocket League">Rocket League</option>
+      </select>
+      <select id="filtre-region">
+        <option value="">Toutes les régions</option>
+        <option value="Europe">Europe</option>
+        <option value="Amérique du Nord">Amérique du Nord</option>
+        <option value="Asie">Asie</option>
+      </select>
+      <select id="filtre-dispo">
+        <option value="">Toutes les dispos</option>
+        <option value="Soir en semaine">Soir en semaine</option>
+        <option value="Weekend">Weekend</option>
+        <option value="Journée">Journée</option>
+      </select>
+    </div>
+
+    <div id="liste-joueurs">
+      <!-- Les cartes des joueurs vont apparaître ici automatiquement -->
+    </div>
+
+  </div>
+
+  <script>
+    let tousLesProfils = [];
+
+    function afficherProfils(profils) {
+      const conteneur = document.getElementById("liste-joueurs");
+      conteneur.innerHTML = "";
+
+      if (profils.length === 0) {
+        conteneur.innerHTML = "<p style='color:#888;'>Aucun joueur ne correspond à ces filtres.</p>";
+        return;
+      }
+
+      profils.forEach(profil => {
+        const badges = profil.jeux.map(j => `<span class="badge">${j}</span>`).join(" ");
+
+        const carte = document.createElement("div");
+        carte.className = "carte-joueur";
+        carte.innerHTML = `
+          <div class="infos">
+            <h3>${profil.pseudo}</h3>
+            <p>${badges} ${profil.rang} — ${profil.region} — ${profil.dispo}</p>
+          </div>
+          <button class="btn-demander">Proposer une partie</button>
+        `;
+        conteneur.appendChild(carte);
+      });
+    }
+
+    function appliquerFiltres() {
+      const jeu = document.getElementById("filtre-jeu").value;
+      const region = document.getElementById("filtre-region").value;
+      const dispo = document.getElementById("filtre-dispo").value;
+
+      const profilsFiltres = tousLesProfils.filter(profil => {
+        const matchJeu = jeu === "" || profil.jeux.includes(jeu);
+        const matchRegion = region === "" || profil.region === region;
+        const matchDispo = dispo === "" || profil.dispo === dispo;
+        return matchJeu && matchRegion && matchDispo;
+      });
+
+      afficherProfils(profilsFiltres);
+    }
+
+    document.getElementById("filtre-jeu").addEventListener("change", appliquerFiltres);
+    document.getElementById("filtre-region").addEventListener("change", appliquerFiltres);
+    document.getElementById("filtre-dispo").addEventListener("change", appliquerFiltres);
+
+    fetch("http://localhost:3000/api/profils")
+      .then(res => res.json())
+      .then(profils => {
+        tousLesProfils = profils;
+        afficherProfils(tousLesProfils);
+      })
+      .catch(err => {
+        document.getElementById("liste-joueurs").innerHTML =
+          "<p style='color:#e74c3c;'>Impossible de contacter le serveur. Vérifie qu'il tourne (node server.js).</p>";
+        console.error(err);
+      });
+  </script>
+
+</body>
+</html>

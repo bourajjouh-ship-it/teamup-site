@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeamUp - Trouve tes coéquipiers</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #0f0f1a;
+      color: white;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #1a1a2e;
+    }
+
+    header h1 {
+      color: #6c5ce7;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+
+    .btn-vip {
+      background-color: #ffd700;
+      color: #0f0f1a;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .hero h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #cccccc;
+      margin-bottom: 30px;
+    }
+
+    .btn-principal {
+      background-color: #6c5ce7;
+      color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-principal:hover {
+      background-color: #5b4bd6;
+    }
+
+    .jeux {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 40px 20px;
+      flex-wrap: wrap;
+    }
+
+    .carte-jeu {
+      background-color: #1a1a2e;
+      padding: 30px;
+      border-radius: 12px;
+      width: 220px;
+      text-align: center;
+    }
+
+    .carte-jeu h3 {
+      color: #6c5ce7;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>TeamUp</h1>
+    <nav>
+      <a href="#">Accueil</a>
+      <a href="feed.html">Trouver un coéquipier</a>
+      <a href="connexion.html">Connexion</a>
+      <a href="inscription.html">Inscription</a>
+      <a href="vip.html" class="btn-vip">Devenir VIP</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Trouve tes coéquipiers en 1 clic</h2>
+    <p>Fortnite, Valorant, Rocket League — trouve des joueurs de ton niveau, quand tu veux.</p>
+    <a href="profil.html" class="btn-principal" style="text-decoration:none; display:inline-block;">Créer mon profil</a>
+  </section>
+
+  <section class="jeux">
+    <div class="carte-jeu">
+      <h3>Fortnite</h3>
+      <p>Trouve des coéquipiers pour tes parties classées ou fun.</p>
+    </div>
+    <div class="carte-jeu">
+      <h3>Valorant</h3>
+      <p>Grimpe en rang avec des joueurs de ton niveau.</p>
+    </div>
+    <div class="carte-jeu">
+      <h3>Rocket League</h3>
+      <p>Trouve ton duo ou ton trio parfait.</p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 TeamUp. Tous droits réservés.
+  </footer>
+
+</body>
+</html>

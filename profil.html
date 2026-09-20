@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeamUp - Créer mon profil</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #0f0f1a;
+      color: white;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #1a1a2e;
+    }
+
+    header h1 {
+      color: #6c5ce7;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+
+    .conteneur-form {
+      max-width: 500px;
+      margin: 60px auto;
+      background-color: #1a1a2e;
+      padding: 40px;
+      border-radius: 12px;
+    }
+
+    .conteneur-form h2 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #cccccc;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      background-color: #0f0f1a;
+      color: white;
+      border: 1px solid #333;
+    }
+
+    .cases-jeux {
+      display: flex;
+      gap: 15px;
+      margin-top: 8px;
+    }
+
+    .cases-jeux label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: normal;
+      margin: 0;
+    }
+
+    .cases-jeux input {
+      width: auto;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 30px;
+      background-color: #6c5ce7;
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #5b4bd6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>TeamUp</h1>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="feed.html">Trouver un coéquipier</a>
+    </nav>
+  </header>
+
+  <div class="conteneur-form">
+    <h2>Créer mon profil</h2>
+    <form id="formulaire-profil">
+
+      <label for="pseudo">Pseudo</label>
+      <input type="text" id="pseudo" placeholder="Ton pseudo de jeu" required>
+
+      <label>Jeux joués</label>
+      <div class="cases-jeux">
+        <label><input type="checkbox" name="jeu" value="Fortnite"> Fortnite</label>
+        <label><input type="checkbox" name="jeu" value="Valorant"> Valorant</label>
+        <label><input type="checkbox" name="jeu" value="Rocket League"> Rocket League</label>
+      </div>
+
+      <label for="rang">Rang actuel</label>
+      <input type="text" id="rang" placeholder="Ex: Diamant, Champion, Élite...">
+
+      <label for="region">Région</label>
+      <select id="region">
+        <option>Europe</option>
+        <option>Amérique du Nord</option>
+        <option>Asie</option>
+      </select>
+
+      <label for="dispo">Disponibilités</label>
+      <select id="dispo">
+        <option>Soir en semaine</option>
+        <option>Weekend</option>
+        <option>Journée</option>
+      </select>
+
+      <button type="submit">Enregistrer mon profil</button>
+
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("formulaire-profil").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      // On récupère les jeux cochés
+      const jeuxCoches = Array.from(document.querySelectorAll('input[name="jeu"]:checked')).map(c => c.value);
+
+      const profil = {
+        pseudo: document.getElementById("pseudo").value,
+        jeux: jeuxCoches,
+        rang: document.getElementById("rang").value,
+        region: document.getElementById("region").value,
+        dispo: document.getElementById("dispo").value
+      };
+
+      fetch("http://localhost:3000/api/profils", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profil)
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert("Profil enregistré pour de vrai !");
+          window.location.href = "feed.html";
+        })
+        .catch(err => {
+          alert("Erreur : le serveur ne répond pas. Vérifie qu'il tourne bien (node server.js).");
+          console.error(err);
+        });
+    });
+  </script>
+
+</body>
+</html>
