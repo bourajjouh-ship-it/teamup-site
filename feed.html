@@ -198,7 +198,7 @@
     document.getElementById("filtre-region").addEventListener("change", appliquerFiltres);
     document.getElementById("filtre-dispo").addEventListener("change", appliquerFiltres);
 
-    fetch("http://localhost:3000/api/profils")
+    fetch("https://teamup-site.onrender.com/api/profils")
       .then(res => res.json())
       .then(profils => {
         tousLesProfils = profils;

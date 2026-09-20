@@ -50,7 +50,7 @@
       const pseudo = document.getElementById("pseudo").value;
       const motDePasse = document.getElementById("motDePasse").value;
 
-      fetch("http://localhost:3000/api/connexion", {
+      fetch("https://teamup-site.onrender.com/api/connexion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pseudo, motDePasse })
