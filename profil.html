@@ -121,13 +121,12 @@
 
       <label>Jeux joués</label>
       <div class="cases-jeux">
-        <label><input type="checkbox" name="jeu" value="Fortnite"> Fortnite</label>
-        <label><input type="checkbox" name="jeu" value="Valorant"> Valorant</label>
-        <label><input type="checkbox" name="jeu" value="Rocket League"> Rocket League</label>
+        <label><input type="checkbox" name="jeu" value="Fortnite" onchange="majRangs()"> Fortnite</label>
+        <label><input type="checkbox" name="jeu" value="Valorant" onchange="majRangs()"> Valorant</label>
+        <label><input type="checkbox" name="jeu" value="Rocket League" onchange="majRangs()"> Rocket League</label>
       </div>
 
-      <label for="rang">Rang actuel</label>
-      <input type="text" id="rang" placeholder="Ex: Diamant, Champion, Élite...">
+      <div id="zone-rangs"></div>
 
       <label for="region">Région</label>
       <select id="region">
@@ -148,17 +147,79 @@
     </form>
   </div>
 
+  <div class="conteneur-form" id="zone-demandes" style="display:none;">
+    <h2>Mes demandes reçues</h2>
+    <div id="liste-demandes"></div>
+  </div>
+
   <script>
+    // Afficher les demandes reçues si on est connecté
+    const pseudoConnecte = localStorage.getItem("pseudoConnecte");
+    if (pseudoConnecte) {
+      document.getElementById("pseudo").value = pseudoConnecte;
+    }
+    if (pseudoConnecte) {
+      fetch(`https://teamup-site.onrender.com/api/demandes/${pseudoConnecte}`)
+        .then(res => res.json())
+        .then(demandes => {
+          if (demandes.length === 0) return;
+          document.getElementById("zone-demandes").style.display = "block";
+          const liste = document.getElementById("liste-demandes");
+          demandes.reverse().forEach(d => {
+            const p = document.createElement("p");
+            p.style.padding = "10px 0";
+            p.style.borderBottom = "1px solid #333";
+            p.textContent = `${d.de} te propose une partie de ${d.jeu || "?"} !`;
+            liste.appendChild(p);
+          });
+        })
+        .catch(() => {});
+    }
+
+    const RANGS_PAR_JEU = {
+      "Fortnite": ["Bronze", "Argent", "Or", "Platine", "Diamant", "Élite", "Champion", "Unreal"],
+      "Valorant": ["Fer", "Bronze", "Argent", "Or", "Platine", "Diamant", "Ascendant", "Immortel", "Radiant"],
+      "Rocket League": ["Bronze", "Argent", "Or", "Platine", "Diamant", "Champion", "Grand Champion", "Supersonic Legend"]
+    };
+
+    function majRangs() {
+      const jeuxCoches = Array.from(document.querySelectorAll('input[name="jeu"]:checked')).map(c => c.value);
+      const zone = document.getElementById("zone-rangs");
+      zone.innerHTML = "";
+
+      jeuxCoches.forEach(jeu => {
+        const label = document.createElement("label");
+        label.textContent = `Rang ${jeu}`;
+        const select = document.createElement("select");
+        select.id = "rang-" + jeu.replace(/\s/g, "");
+        select.dataset.jeu = jeu;
+        RANGS_PAR_JEU[jeu].forEach(r => {
+          const option = document.createElement("option");
+          option.value = r;
+          option.textContent = r;
+          select.appendChild(option);
+        });
+        zone.appendChild(label);
+        zone.appendChild(select);
+      });
+    }
+
     document.getElementById("formulaire-profil").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      // On récupère les jeux cochés
       const jeuxCoches = Array.from(document.querySelectorAll('input[name="jeu"]:checked')).map(c => c.value);
+
+      // On récupère le rang choisi pour chaque jeu coché
+      const rangs = {};
+      jeuxCoches.forEach(jeu => {
+        const select = document.getElementById("rang-" + jeu.replace(/\s/g, ""));
+        if (select) rangs[jeu] = select.value;
+      });
 
       const profil = {
         pseudo: document.getElementById("pseudo").value,
         jeux: jeuxCoches,
-        rang: document.getElementById("rang").value,
+        rangs: rangs,
         region: document.getElementById("region").value,
         dispo: document.getElementById("dispo").value
       };

@@ -11,6 +11,7 @@ const app = express();
 const PORT = 3000;
 const FICHIER_PROFILS = "profils.json";
 const FICHIER_USERS = "users.json";
+const FICHIER_DEMANDES = "demandes.json";
 
 app.use(cors());
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use(express.json());
 // Création des fichiers de stockage s'ils n'existent pas
 if (!fs.existsSync(FICHIER_PROFILS)) fs.writeFileSync(FICHIER_PROFILS, "[]");
 if (!fs.existsSync(FICHIER_USERS)) fs.writeFileSync(FICHIER_USERS, "[]");
+if (!fs.existsSync(FICHIER_DEMANDES)) fs.writeFileSync(FICHIER_DEMANDES, "[]");
 
 // ---------- COMPTES ----------
 
@@ -77,6 +79,30 @@ app.post("/api/profils", (req, res) => {
 app.get("/api/profils", (req, res) => {
   const profils = JSON.parse(fs.readFileSync(FICHIER_PROFILS));
   res.json(profils);
+});
+
+// ---------- DEMANDES DE PARTIE ----------
+
+// Envoyer une demande ("Proposer une partie")
+app.post("/api/demandes", (req, res) => {
+  const { de, pour, jeu } = req.body;
+
+  if (!de || !pour) {
+    return res.status(400).json({ erreur: "Infos manquantes." });
+  }
+
+  const demandes = JSON.parse(fs.readFileSync(FICHIER_DEMANDES));
+  demandes.push({ de, pour, jeu, date: new Date().toISOString() });
+  fs.writeFileSync(FICHIER_DEMANDES, JSON.stringify(demandes, null, 2));
+
+  res.json({ message: "Demande envoyée !" });
+});
+
+// Récupérer les demandes reçues par un pseudo
+app.get("/api/demandes/:pseudo", (req, res) => {
+  const demandes = JSON.parse(fs.readFileSync(FICHIER_DEMANDES));
+  const mesDemandes = demandes.filter(d => d.pour.toLowerCase() === req.params.pseudo.toLowerCase());
+  res.json(mesDemandes);
 });
 
 // ---------- VIP / PAIEMENT ----------

@@ -164,19 +164,48 @@
       }
 
       profils.forEach(profil => {
-        const badges = profil.jeux.map(j => `<span class="badge">${j}</span>`).join(" ");
+        const rangs = profil.rangs || {};
+        const badges = profil.jeux.map(j => `<span class="badge">${j} ${rangs[j] || ""}</span>`).join(" ");
 
         const carte = document.createElement("div");
         carte.className = "carte-joueur";
         carte.innerHTML = `
           <div class="infos">
             <h3>${profil.pseudo}</h3>
-            <p>${badges} ${profil.rang} — ${profil.region} — ${profil.dispo}</p>
+            <p>${badges} — ${profil.region} — ${profil.dispo}</p>
           </div>
-          <button class="btn-demander">Proposer une partie</button>
+          <button class="btn-demander" onclick="proposerPartie('${profil.pseudo}', '${profil.jeux[0] || ""}')">Proposer une partie</button>
         `;
         conteneur.appendChild(carte);
       });
+    }
+
+    function proposerPartie(pseudoDestinataire, jeu) {
+      const pseudoConnecte = localStorage.getItem("pseudoConnecte");
+
+      if (!pseudoConnecte) {
+        alert("Connecte-toi d'abord pour proposer une partie !");
+        window.location.href = "connexion.html";
+        return;
+      }
+
+      if (pseudoConnecte.toLowerCase() === pseudoDestinataire.toLowerCase()) {
+        alert("Tu ne peux pas te proposer une partie à toi-même !");
+        return;
+      }
+
+      fetch("https://teamup-site.onrender.com/api/demandes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ de: pseudoConnecte, pour: pseudoDestinataire, jeu: jeu })
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert(`Demande envoyée à ${pseudoDestinataire} !`);
+        })
+        .catch(err => {
+          alert("Le serveur ne répond pas.");
+        });
     }
 
     function appliquerFiltres() {
