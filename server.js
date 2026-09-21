@@ -99,8 +99,8 @@ app.post("/api/creer-paiement-vip", async (req, res) => {
           quantity: 1
         }
       ],
-      success_url: "http://localhost:5500/vip-succes.html",
-      cancel_url: "http://localhost:5500/vip.html"
+      success_url: "https://teamup-site-2026.netlify.app/vip-succes.html",
+      cancel_url: "https://teamup-site-2026.netlify.app/vip.html"
     });
 
     res.json({ url: session.url });
